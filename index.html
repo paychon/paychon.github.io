@@ -47,31 +47,12 @@
                 transform: translateY(100vh) rotate(360deg);
             }
         }
-
-        /* สไตล์ข้อความกลางหน้าจอ */
-        .overlay-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 10px;
-            font-size: 30px;
-            text-align: center;
-            z-index: 1000;
-            display: none;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <button onclick="showMessageAndFlowers()">กดเพื่อดูดอกไม้✿</button>
+        <button onclick="createFlowers()">กดเพื่อดูดอกไม้✿</button>
     </div>
-
-    <!-- ข้อความกลางหน้าจอ -->
-    <div class="overlay-message" id="overlayMessage">สวัสดี</div>
 
     <script>
         function createFlower() {
@@ -94,23 +75,11 @@
 
         function createFlowers() {
             // สร้างดอกไม้ 50 ดอก
-            for (let i = 0; i < 50; i++) {
+            for(let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     createFlower();
                 }, i * 100);
             }
-        }
-
-        function showMessageAndFlowers() {
-            const overlayMessage = document.getElementById('overlayMessage');
-            overlayMessage.style.display = 'block'; // แสดงข้อความ
-
-            // ซ่อนข้อความหลัง 3 วินาที
-            setTimeout(() => {
-                overlayMessage.style.display = 'none';
-            }, 3000);
-
-            createFlowers(); // สร้างดอกไม้
         }
     </script>
 </body>
