@@ -1,51 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Simple Website</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background-color: #4682b4;
-      color: white;
-      padding: 20px;
-    }
-    main {
-      padding: 20px;
-    }
-    footer {
-      background-color: #4682b4;
-      color: white;
-      padding: 10px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
-    a {
-      color: #ff6347;
-      text-decoration: none;
-    }
-  </style>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fef6e9, #ffe4e1);
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .flower {
+            position: absolute;
+            pointer-events: none;
+            animation: fall 6s linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* สไตล์ข้อความกลางหน้าจอ */
+        .overlay-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 30px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Welcome to My Simple Website</h1>
-    <p>A basic HTML page with some style</p>
-  </header>
-  <main>
-    <h2>About Me</h2>
-    <p>Hi! This is a simple example of an HTML page.</p>
-    <p>You can learn more about HTML at <a href="https://www.w3schools.com" target="_blank">W3Schools</a>.</p>
-  </main>
-  <footer>
-    <p>&copy; 2025 My Simple Website</p>
-  </footer>
+    <div class="container">
+        <button onclick="showMessageAndFlowers()">กดเพื่อดูดอกไม้✿</button>
+    </div>
+
+    <!-- ข้อความกลางหน้าจอ -->
+    <div class="overlay-message" id="overlayMessage">สวัสดี</div>
+
+    <script>
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.style.left = Math.random() * 100 + 'vw';
+            
+            // สร้างดอกไม้แบบสุ่มด้วย emoji
+            const flowers = ['🌸', '🌺', '🌹', '🌷', '🌼', '💐', '🌻'];
+            flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+            flower.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            
+            document.body.appendChild(flower);
+            
+            // ลบดอกไม้หลังจากอนิเมชั่นจบ
+            setTimeout(() => {
+                flower.remove();
+            }, 6000);
+        }
+
+        function createFlowers() {
+            // สร้างดอกไม้ 50 ดอก
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createFlower();
+                }, i * 100);
+            }
+        }
+
+        function showMessageAndFlowers() {
+            const overlayMessage = document.getElementById('overlayMessage');
+            overlayMessage.style.display = 'block'; // แสดงข้อความ
+
+            // ซ่อนข้อความหลัง 3 วินาที
+            setTimeout(() => {
+                overlayMessage.style.display = 'none';
+            }, 3000);
+
+            createFlowers(); // สร้างดอกไม้
+        }
+    </script>
 </body>
 </html>
