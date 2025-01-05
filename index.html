@@ -39,6 +39,19 @@
             animation: fall 6s linear forwards;
         }
 
+        .message {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 48px;
+            color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: showMessage 1s forwards;
+            font-weight: bold;
+        }
+
         @keyframes fall {
             0% {
                 transform: translateY(-100vh) rotate(0deg);
@@ -47,11 +60,23 @@
                 transform: translateY(100vh) rotate(360deg);
             }
         }
+
+        @keyframes showMessage {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <button onclick="createFlowers()">กดเพื่อดูดอกไม้✿</button>
+        <button onclick="createFlowersAndMessage()">กดเพื่อดูดอกไม้✿</button>
     </div>
 
     <script>
@@ -60,21 +85,36 @@
             flower.className = 'flower';
             flower.style.left = Math.random() * 100 + 'vw';
             
-            // สร้างดอกไม้แบบสุ่มด้วย emoji
             const flowers = ['🌸', '🌺', '🌹', '🌷', '🌼', '💐', '🌻'];
             flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
             flower.style.fontSize = (Math.random() * 30 + 20) + 'px';
             
             document.body.appendChild(flower);
             
-            // ลบดอกไม้หลังจากอนิเมชั่นจบ
             setTimeout(() => {
                 flower.remove();
             }, 6000);
         }
 
-        function createFlowers() {
-            // สร้างดอกไม้ 50 ดอก
+        function showMessage() {
+            // ลบข้อความเก่าถ้ามี
+            const oldMessage = document.querySelector('.message');
+            if (oldMessage) {
+                oldMessage.remove();
+            }
+
+            const message = document.createElement('div');
+            message.className = 'message';
+            message.innerText = 'For Pupe🤍';
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
+
+        function createFlowersAndMessage() {
+            showMessage();
             for(let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     createFlower();
