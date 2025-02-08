@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จดหมายถึง ต อ ง</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary-color: #ff8fab;
+            --secondary-color: #ffc2d1;
+            --background-color: #fff5f7;
+            --text-color: #4a4a4a;
+            --border-color: #ffc2d1;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Prompt', sans-serif;
+            perspective: 1000px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .flower {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .flower.visible {
+            opacity: 0.6;
+        }
+
+        .flower svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--primary-color);
+        }
+
+        .envelope {
+            width: min(350px, 90vw);
+            height: 220px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(255, 143, 171, 0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            cursor: pointer;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            z-index: 1;
+        }
+
+        .envelope-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            z-index: 3;
+            border-radius: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .envelope.open .envelope-front {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sender-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.8em;
+            color: var(--text-color);
+        }
+
+        .address-to {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            transform-origin: top;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            z-index: 2;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .letter {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            background: #fff;
+            padding: 30px;
+            width: min(600px, 85vw);
+            height: min(80vh, 600px);
+            box-shadow: 0 4px 12px rgba(255, 143, 171, 0.1);
+            border-radius: 12px;
+            opacity: 0;
+            transition: all 0.8s ease;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            z-index: 9998; /* เพิ่ม z-index ให้อยู่ด้านหน้า */
+        }
+
+        .letter.open {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .letter-content {
+            display: none;
+            text-align: center;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+
+        .letter.open .letter-content {
+            display: block;
+        }
+
+        .date {
+            text-align: right;
+            margin-bottom: 24px;
+            color: var(--primary-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .paragraph {
+            margin: 16px 0;
+            text-indent: 24px;
+            text-align: left;
+            color: var(--text-color);
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 32px;
+            font-style: italic;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin-top: 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.3s ease;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            transform: rotate(15deg);
+            border-radius: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        .envelope.open .stamp {
+            opacity: 0;
+        }
+
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes float-up {
+            to {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        .click-instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        #message {
+            margin-top: 16px;
+            color: var(--primary-color);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <template id="flower-template">
+        <div class="flower">
+            <svg viewBox="0 0 100 100">
+                <path d="M50 0 C60 20 80 20 100 30 C80 40 60 60 50 100 C40 60 20 40 0 30 C20 20 40 20 50 0"/>
+            </svg>
+        </div>
+    </template>
+
+    <div class="envelope">
+        <div class="envelope-front">
+            <div class="sender-info">
+                จาก: คนที่รักเธอ
+            </div>
+            <div class="address-to">
+                ถึง: ต อ ง
+            </div>
+            <div class="click-instruction">คลิกที่ซองจดหมายเพื่อเปิดอ่าน</div>
+        </div>
+        <div class="envelope-flap"></div>
+        <div class="stamp">💌</div>
+    </div>
+
+    <div class="letter">
+        <div class="letter-content">
+            <div class="date" id="current-date"></div>
+            <h1>ถึง ต อ ง...</h1>
+
+            <div class="paragraph">
+                เธอคือแสงสว่างในวันที่มืดมน เป็นรอยยิ้มที่ทำให้หัวใจฉันสดใส 
+                ความรู้สึกที่มีต่อเธอไม่เคยจางหายไป แต่กลับยิ่งทวีความรุ่มรวยขึ้นทุกวัน
+            </div>
+
+            <div class="paragraph">
+                ฉันยอมรับในความผิดพลาดที่ผ่านมา และพร้อมที่จะเรียนรู้ พัฒนาตัวเอง
+                เพื่อให้คู่ควรกับความรักอันบริสุทธิ์ที่เธอสมควรได้รับ 
+                ทุกก้าวที่ฉันก้าวเดิน ล้วนมีเป้าหมายเพื่อให้เธอภูมิใจ
+            </div>
+
+            <div class="paragraph">
+                ความทรงจำที่เรามีร่วมกันยังคงสดใส ราวกับเพิ่งเกิดขึ้นเมื่อวาน 
+                ฉันหวังว่าเธอจะให้โอกาสฉันได้พิสูจน์ตัวเอง 
+                ว่าความรักของฉันนั้นจริงแท้และยั่งยืน
+            </div>
+
+            <div class="signature">
+                ด้วยความรักนิรันดร์...<br>
+                คนที่รักเธอตลอดไป
+            </div>
+
+            <button class="btn" onclick="acceptLove()">ให้โอกาสอีกครั้ง ❤️</button>
+            <p id="message"></p>
+        </div>
+    </div>
+
+    <div class="hearts"></div>
+
+    <script>
+        function formatThaiDate() {
+            const months = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+            
+            const date = new Date();
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            
+            return `${day} ${month} ${year}`;
+        }
+
+        function createFlowerBackground() {
+            const colors = ['#ff8fab', '#ffb3c6', '#ffc2d1', '#ffd1dc'];
+            const positions = Array(20).fill().map(() => ({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                scale: Math.random() * 2 + 1,
+                rotation: Math.random() * 360
+            }));
+
+            positions.forEach(pos => {
+                const template = document.getElementById('flower-template');
+                const flower = template.content.cloneNode(true).querySelector('.flower');
+                
+                flower.style.left = pos.x + 'px';
+                flower.style.top = pos.y + 'px';
+                flower.style.transform = `scale(${pos.scale}) rotate(${pos.rotation}deg)`;
+                flower.querySelector('svg').style.fill = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(flower);
+
+                setTimeout(() => {
+                    flower.classList.add('visible');
+                }, Math.random() * 1000);
+
+                let floatY = pos.y;
+                let floatX = pos.x;
+                
+                setInterval(() => {
+                    floatY += (Math.random() - 0.5) * 2;
+                    floatX += (Math.random() - 0.5) * 2;
+                    flower.style.top = floatY + 'px';
+                    flower.style.left = floatX + 'px';
+                }, 100);
+            });
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '-20px';
+            heart.style.fontSize = (Math.random() * 16 + 8) + 'px';
+            heart.style.animation = `float-up ${Math.random() * 2 + 1.5}s linear`;
+            document.querySelector('.hearts').appendChild(heart);
+
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
+        }
+
+        function acceptLove() {
+            const message = document.getElementById('message');
+            message.innerHTML = '💕 ขอบคุณที่ให้โอกาสอีกครั้ง ฉันจะทำให้เธอมีความสุข 💕';
+            
+            for(let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-date').textContent = formatThaiDate();
+        });
+
+        document.querySelector('.envelope').addEventListener('click', function() {
+            this.classList.add('open');
+            setTimeout(() => {
+                document.querySelector('.letter').classList.add('open');
+                createFlowerBackground();
+            }, 800);
+        });
+    </script>
+</body>
+</html>
